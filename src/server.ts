@@ -5,6 +5,7 @@ import { genericErrorHandler } from "./middleware/error.middleware.js";
 import { routeNotFound } from "./middleware/route-not-found.js";
 import { attachCorrelationId } from "./middleware/correlation.middleware.js";
 import { connectDB } from "./config/prisma.js";
+import { setupRoomGenerationWorker } from "./processors/roomGeneration.processor.js";
 
 const app = express();
 
@@ -19,5 +20,7 @@ app.use(genericErrorHandler);
 
 app.listen(serverConfig.PORT, async () => {
   await connectDB();
+  setupRoomGenerationWorker();
+  console.log("Room-Generation worker set up successfully");
   console.log(`Server is running on port ${serverConfig.PORT}`);
 });
