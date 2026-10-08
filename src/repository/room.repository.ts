@@ -13,6 +13,13 @@ export async function createRoom(roomData: CreateRoomDto) {
   return room;
 }
 
+export async function bulkCreate(rooms: CreateRoomDto[]) {
+  return await prisma.room.createMany({
+    data: rooms,
+    skipDuplicates: true,
+  });
+}
+
 export async function getRoomById(id: number) {
   const room = await prisma.room.findUnique({
     where: {
@@ -45,8 +52,25 @@ export async function getAllRooms() {
   return rooms;
 }
 
+export async function findByRoomcategoryAndDate(
+  roomCategoryId: number,
+  currDate: Date,
+) {
+  return await prisma.room.findFirst({
+    where: {
+      roomCategoryId,
+      dateOfAvailability: currDate,
+      deletedAt: null,
+    },
+  });
+}
+
 export async function updateRoom(id: number, roomData: UpdateRoomDto) {
-  await getRoomById(id);
+  const room = await getRoomById(id);
+
+  if (!room) {
+    throw notFound("Room not found");
+  }
 
   const updatedRoom = await prisma.room.update({
     where: {

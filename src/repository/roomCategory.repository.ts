@@ -1,6 +1,9 @@
 import logger from "../config/logger.config.js";
 import prisma from "../config/prisma.js";
-import { CreateRoomCategoryDto, UpdateRoomCategoryDto } from "../dtos/roomCategory.dto.js";
+import {
+  CreateRoomCategoryDto,
+  UpdateRoomCategoryDto,
+} from "../dtos/roomCategory.dto.js";
 import { notFound } from "../utils/errors/app.error.js";
 
 export async function createRoomCategory(data: CreateRoomCategoryDto) {
@@ -45,8 +48,15 @@ export async function getAllRoomCategories() {
   return categories;
 }
 
-export async function updateRoomCategory(id: number, data: UpdateRoomCategoryDto) {
-  await getRoomCategoryById(id);
+export async function updateRoomCategory(
+  id: number,
+  data: UpdateRoomCategoryDto,
+) {
+  const roomCategory = await getRoomCategoryById(id);
+
+  if (!roomCategory) {
+    throw notFound("Room category not found");
+  }
 
   const updatedCategory = await prisma.roomCategory.update({
     where: {
