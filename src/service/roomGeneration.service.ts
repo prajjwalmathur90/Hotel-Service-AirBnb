@@ -41,10 +41,11 @@ export async function generateRoom(jobData: RoomGenerationJobDto) {
 
   const currDate = new Date(startDate);
 
-  while (currDate < endDate) {
-    const batchEndDate = new Date(endDate);
-
-    batchEndDate.setDate(batchEndDate.getDate() + batchSize);
+  while (currDate <= endDate) {
+    const batchEndDate = new Date(currDate);
+    
+    // Process batchSize days per chunk (inclusive of start date, so subtract 1)
+    batchEndDate.setDate(batchEndDate.getDate() + batchSize - 1);
 
     if (batchEndDate > endDate) {
       batchEndDate.setTime(endDate.getTime());
@@ -60,7 +61,8 @@ export async function generateRoom(jobData: RoomGenerationJobDto) {
     totalRoomsCreated += batchResult.roomsCreated;
     totalDatesProcessed += batchResult.dateProcessed;
 
-    currDate.setTime(currDate.getTime() + batchSize);
+    // Advance currDate by batchSize days
+    currDate.setDate(currDate.getDate() + batchSize);
   }
 
   return {

@@ -6,6 +6,7 @@ import { routeNotFound } from "./middleware/route-not-found.js";
 import { attachCorrelationId } from "./middleware/correlation.middleware.js";
 import { connectDB } from "./config/prisma.js";
 import { setupRoomGenerationWorker } from "./processors/roomGeneration.processor.js";
+import { initRoomGenerationScheduler } from "./schedulers/roomGeneration.scheduler.js";
 
 const app = express();
 
@@ -22,5 +23,7 @@ app.listen(serverConfig.PORT, async () => {
   await connectDB();
   setupRoomGenerationWorker();
   console.log("Room-Generation worker set up successfully");
+  initRoomGenerationScheduler();
+  console.log("Room-Generation scheduler set up successfully");
   console.log(`Server is running on port ${serverConfig.PORT}`);
 });
